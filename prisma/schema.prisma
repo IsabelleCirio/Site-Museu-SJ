@@ -63,9 +63,9 @@ model Acervo {
   localizacao       String?
   periodo           String?
   dataProducao      String?
-  material          String?
-  tecnica           String?
-  altura            String?
+  material          String?  @db.Text
+  tecnica           String?  @db.Text
+  altura            String?  @db.Text
   largura           String?
   profundidade      String?
   cidadeOrigem      String?
@@ -76,6 +76,7 @@ model Acervo {
   formaAquisicao    String?
   estadoConservacao String?
   imagemCapa        String?
+  notionId          String?  @unique
 
   usuario Usuario @relation(fields: [usuarioId], references: [id])
 
@@ -101,7 +102,7 @@ model VideoEspecial {
   titulo    String
   descricao String?  @db.Text
   tipo      String // "intro", "banner", "capa"
-  video     String // URL do vídeo
+  video     String   @db.Text // URL do vídeo
   thumbnail String? // URL da thumbnail
   ordem     Int?
   ativo     Boolean  @default(true)
@@ -109,6 +110,7 @@ model VideoEspecial {
   updatedAt DateTime @updatedAt
   usuarioId Int
   usuario   Usuario  @relation(fields: [usuarioId], references: [id])
+  notionId  String?  @unique
 }
 
 model ContadorVisitante {

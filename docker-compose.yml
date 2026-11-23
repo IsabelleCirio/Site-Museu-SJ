@@ -21,6 +21,7 @@ services:
       - museu_network
   mysql:
     image: mysql:latest
+    restart: unless-stopped
     container_name: my_mysql_site
     environment:
       - MYSQL_ROOT_PASSWORD=${MY_SECRET_PW}
