@@ -1,380 +1,10 @@
-# Documentação do Projeto
+# Museu Histórico de São José — Site
 
 ## Visão Geral
-Este projeto é uma landing page responsiva para o Museu Histórico de São José, desenvolvida com **Next.js** e **Tailwind CSS**. O objetivo é proporcionar uma experiência imersiva para os visitantes, incluindo um **tour 3D interativo**.
 
-## Documentação funcional
+Este projeto é uma landing page responsiva para o **Museu Histórico de São José**, desenvolvida com **Next.js** e **Tailwind CSS**. O objetivo é proporcionar uma experiência imersiva aos visitantes, com acervo de peças, vídeos, artigos, **tour 3D interativo** e jogos.
 
-- [Casos de uso observados no código](docs/casos-de-uso.md) — documentação reversa dos fluxos de visitantes e administradores, com pontos ainda pendentes de validação.
-
-## Tecnologias Utilizadas
-- **Next.js** (React Framework)
-- **Tailwind CSS** (Estilização)
-- **TypeScript** (Tipagem)
-- **Three.js** (para o tour 3D)
-- **Docker** (Containerização)
-
-## Como Rodar o Projeto
-### 1. Clonar o Repositório
-```bash
-git clone https://github.com/Projeto-Site-do-Museu/ProjetoMuseu
-cd nome-do-projeto
-```
-
-### 2. Instalar Dependências
-```bash
-npm install
-# ou
-yarn install
-```
-
-### 3. Rodar o Servidor de Desenvolvimento
-```bash
-npm run dev
-# ou
-yarn dev
-```
-
-Acesse `http://localhost:3000` no navegador para ver a aplicação em funcionamento.
-
-### 4. Rodar o Projeto com Docker
-
-#### Ambiente de Desenvolvimento
-Para rodar o projeto em ambiente de desenvolvimento com Docker (com hot reload):
-
-```bash
-docker-compose -f docker-compose.dev.yml up --build
-```
-
-Este comando irá:
-- Construir a imagem Docker para desenvolvimento
-- Montar o código-fonte como um volume para permitir hot reload
-- Iniciar o servidor de desenvolvimento com `next dev`
-
-Acesse `http://localhost:3000` no navegador para ver a aplicação em funcionamento.
-
-#### Ambiente de Produção
-Para rodar o projeto em ambiente de produção com Docker:
-
-```bash
-docker-compose up --build
-```
-
-Este comando irá:
-- Construir a imagem Docker para produção
-- Executar o build da aplicação
-- Iniciar o servidor otimizado com `next start`
-
-Acesse `http://localhost:3000` no navegador para ver a aplicação em funcionamento.
-
-### 5. Rodar o Servidor definitivo sem Docker
-
-Inicialmente, execute: 
-
-```bash
-npm run build
-```
-
-Este comando irá gerar uma versão otimizada do site, porém qualquer erro no código pode impossibilitar o build e deve ser corrigido
-
-após o build
-
-```bash
-npm run start
-```
-
-Acesse `http://localhost:3000` no navegador para ver a aplicação em funcionamento.
-
-### 6. Banco de Dados: MySQL + Prisma
-
-#### Dependências
-
-- [MySQL](https://www.mysql.com/) (Servidor de banco de dados relacional)
-- [Prisma ORM](https://www.prisma.io/) (`prisma` e `@prisma/client`)
-- [bcryptjs](https://www.npmjs.com/package/bcryptjs) (para hash de senhas)
-
-Instale as dependências do Prisma no projeto:
-
-```bash
-npm install prisma @prisma/client bcryptjs
-npx prisma init
-```
-
-#### Configuração do MySQL
-
-1. **Instale o MySQL** (caso não tenha):
-
-   ```bash
-   sudo apt update
-   sudo apt install mysql-server
-   ```
-
-2. **Crie um usuário e banco de dados:**
-
-   ```bash
-   sudo mysql
-   ```
-
-   No prompt do MySQL:
-
-   ```sql
-   CREATE USER 'admin'@'localhost' IDENTIFIED BY 'password';
-   CREATE DATABASE database_museu;
-   GRANT ALL PRIVILEGES ON database_museu.* TO 'admin'@'localhost';
-   FLUSH PRIVILEGES;
-   EXIT;
-   ```
-
-3. **Configure a string de conexão no arquivo `.env`:**
-
-   ```env
-   DATABASE_URL="mysql://admin:password@localhost:3306/database_museu"
-   ```
-
-#### Comandos Prisma
-
-- **Gerar as tabelas no banco:**
-
-  ```bash
-  npx prisma migrate dev --name init
-  ```
-
-- **Visualizar e editar dados via interface web:**
-
-  ```bash
-  npx prisma studio
-  ```
-
-- **Gerar o client do Prisma (após alterar o schema):**
-
-  ```bash
-  npx prisma generate
-  ```
-
-#### Boas Práticas
-
-- **Nunca salve senhas em texto puro**: Sempre utilize hash (exemplo: `bcryptjs`).
-- **Versione o schema do banco**: Use migrations do Prisma para manter o histórico das alterações.
-- **Use variáveis de ambiente**: Nunca exponha senhas ou dados sensíveis no código.
-- **Faça backup regular do banco**: Especialmente em produção.
-- **Utilize o Prisma Client para todas as queries**: Evita SQL Injection e facilita manutenção.
-- **Mantenha o schema.prisma atualizado**: Sempre que alterar entidades ou relacionamentos.
-
-#### Acesso ao Banco de Dados
-
-- **Acesso via terminal:**
-
-  ```bash
-  mysql -u admin -p -h localhost -P 3306 database_museu
-  ```
-
-- **Acesso via Prisma Studio:**
-
-  ```bash
-  npx prisma studio
-  ```
-
-### Como gerar o hash da senha do admin
-
-Para criar um usuário admin manualmente no banco, você precisa gerar o hash da senha.  
-No terminal, execute:
-
-```sh
-node
-```
-E então, dentro do prompt do Node.js, digite:
-
-```js
-const bcrypt = require('bcryptjs');
-bcrypt.hashSync('ifsc.br.museu!##&', 10);
-```
-O resultado será o hash da senha. Use esse valor no campo `senhaHash` ao criar o usuário admin no banco de dados.
-
-#### Referências
-
-- [Documentação Prisma](https://www.prisma.io/docs/)
-- [Documentação MySQL](https://dev.mysql.com/doc/)
-- [Prisma + Next.js](https://www.prisma.io/docs/guides/development-environment/nextjs)
-
----
-
-**Observação:**  
-Sempre que alterar o arquivo `prisma/schema.prisma`, rode `npx prisma migrate dev` para atualizar o banco de dados.
-
-
-# Boas práticas
-
-### O projeto foi criado em Next.JS com Tailwind.CSS, utilizando conceitos de MobileFirst.
-Em resumo, caso altere a estrutura do código, tome *MUITO* cuidado para não alterar as boas práticas.
-Toda a responsividade do site gira em torno do MobileFirst. Os estilos em comum permanecem inalterados, mas os estilos que são diferentes para mobile e web devem ser feitos da seguinte forma:
-
-ClassName=" estilo-para-mobile md:estilo-para-web"
-
-mantendo esta estrutura a responsividade do site deve ser facilmente ajustada.
-
-#Utilize apenas as novas versões do Next!
-
-todas as maiores funcionalidades do site estão feitas conforme as boas práticas das versões mais recentes do next, então, em caso de novas alterações, olhe para o restante do código e não adicione nenhuma sintaxe nova, pois provavelmente estará errada.
-
-# Futuras alterações 
-
-O site foi desenhado para que todos as imagens e textos sejam dinamicos a partir de uma API. Esta API deve ser criada, juntamente ao banco de dados e uma interface gráfica para o gestor administrar o site de forma simples e segura apenas realizando requisições para a API. Após a conclusão da mesma, os Mocks de imagens e texto do site devem ser substituidos pelo retorno da requisição para a API, tornando o site dinâmico às alterações.
-
-## Estrutura do Projeto
-```
-/
-├── components/       # Componentes reutilizáveis
-├── public/           # Arquivos estáticos (imagens, fontes)
-├── src/              # Diretório fonte do projeto
-|   ├── app/          # Páginas da aplicação
-│     ├── globals.css # arquivo css geral (utilizar apenas para configurações globais, para estilizações de pagina utilizar as classes tailwind.)
-│     ├── page.tsx    # Página principal (Home)
-│     ├── about       # pagina sobre
-│     ├── acervo      # pagina acervo
-│     ├── tour        # pagina tour3D
-│     ├── ...         # dentre outros
-|   ├── components/   # Diretório dos componentes
-│     ├── footer.tsx  # Footer do site
-│     ├── header.tsx  # header do site
-│     ├── tour3D.tsc  # componente do tour 3D
-│     ├── ...         # dentre outros
-├── package.json      # Configuração de dependências
-├── tsconfig.json     # Configuração do TypeScript
-├── next.config.js    # Configuração do Next.js
-├── Dockerfile        # Configuração Docker para produção
-├── Dockerfile.dev    # Configuração Docker para desenvolvimento
-├── docker-compose.yml       # Configuração docker-compose para produção
-└── docker-compose.dev.yml   # Configuração docker-compose para desenvolvimento
-```
-
-## Diagrama do Banco de Dados
-
-Fonte: `prisma/schema.prisma`. Campos marcados como "opcional" aceitam `NULL`.
-
-```mermaid
-erDiagram
-    Usuario {
-        Int id PK "autoincrement()"
-        String nome
-        String email UK
-        String senhaHash
-        String role
-        Boolean ativo
-        DateTime createdAt
-        DateTime updatedAt
-    }
-    Artigo {
-        Int id PK "autoincrement()"
-        String titulo
-        String resumo "opcional; Text"
-        String conteudo "LongText"
-        String imagem "opcional"
-        String video "opcional"
-        DateTime dataPublicacao "opcional"
-        Boolean ativo
-        DateTime createdAt
-        DateTime updatedAt
-        Int usuarioId FK
-    }
-    Acervo {
-        Int id PK "autoincrement()"
-        String titulo
-        String descricao "opcional; Text"
-        String imagem "opcional"
-        Int ordem "opcional"
-        String colecao "opcional"
-        Boolean ativo
-        DateTime createdAt
-        DateTime updatedAt
-        Int usuarioId FK
-        String nome "opcional"
-        String numeroInventario "opcional"
-        String artista "opcional"
-        String tags "opcional"
-        String localizacao "opcional"
-        String periodo "opcional"
-        String dataProducao "opcional"
-        String material "opcional"
-        String tecnica "opcional"
-        String altura "opcional"
-        String largura "opcional"
-        String profundidade "opcional"
-        String cidadeOrigem "opcional"
-        String estadoOrigem "opcional"
-        String paisOrigem "opcional"
-        String contextoHistorico "opcional; Text"
-        String doador "opcional"
-        String formaAquisicao "opcional"
-        String estadoConservacao "opcional"
-        String imagemCapa "opcional"
-    }
-    AcervoMidia {
-        Int id PK "autoincrement()"
-        Int acervoId FK
-        String tipo
-        String url "Text"
-        String titulo "opcional"
-        Int ordem "opcional"
-        Boolean ativo
-        DateTime createdAt
-    }
-    VideoEspecial {
-        Int id PK "autoincrement()"
-        String titulo
-        String descricao "opcional; Text"
-        String tipo
-        String video
-        String thumbnail "opcional"
-        Int ordem "opcional"
-        Boolean ativo
-        DateTime createdAt
-        DateTime updatedAt
-        Int usuarioId FK
-    }
-    ContadorVisitante {
-        Int id PK "autoincrement()"
-        Int contador
-        DateTime dataRegistro
-        String ipOrigem "opcional"
-        String userAgent "opcional"
-        DateTime createdAt
-    }
-    Configuracao {
-        Int id PK "autoincrement()"
-        String chave UK
-        String valor "Text"
-        String descricao "opcional"
-        DateTime createdAt
-        DateTime updatedAt
-    }
-
-    Usuario ||--o{ Artigo : "escreve"
-    Usuario ||--o{ Acervo : "gerencia"
-    Usuario ||--o{ VideoEspecial : "administra"
-    Acervo ||--o{ AcervoMidia : "possui"
-```
-
-A exclusão de um `Acervo` remove suas `AcervoMidia` em cascata, conforme a relação definida no Prisma.
-
-## Padrões e Boas Práticas
-- **Componentização**: Componentes reutilizáveis para facilitar a manutenção.
-- **Responsividade**: Uso de Tailwind CSS para adaptação a diferentes tamanhos de tela.
-- **Code Style**: Uso de **ESLint e Prettier** para manter a uniformidade do código.
-- **Performance**: Imagens otimizadas e uso de **lazy loading**.
-
-## Considerações Finais
-Caso precise adicionar novas funcionalidades ou realizar manutenção, siga os padrões estabelecidos e consulte a documentação do Next.js e Tailwind CSS.
-
-
-
-
-# Documentação do Projeto
-
-## Visão Geral
-
-Este projeto é o site do **Museu Histórico de São José**: uma landing page responsiva desenvolvida com **Next.js** e **Tailwind CSS**, que oferece uma experiência imersiva aos visitantes, com acervo de peças, vídeos, artigos, **tour 3D interativo** e jogos.
-
-O conteúdo do **acervo** e dos **vídeos** é cadastrado no **Notion** e sincronizado automaticamente com o banco de dados do site. Quem cuida do conteúdo edita apenas o Notion.
+O conteúdo do **acervo** e dos **vídeos** é cadastrado no **Notion** e sincronizado com o banco de dados do site por um script. Quem cuida do conteúdo edita apenas o Notion; o site lê tudo do próprio banco e não depende do Notion para funcionar (veja [Como funciona a integração com o Notion](#como-funciona-a-integração-com-o-notion)).
 
 ## Documentação funcional
 
@@ -388,24 +18,128 @@ O conteúdo do **acervo** e dos **vídeos** é cadastrado no **Notion** e sincro
 - **Three.js** (Tour 3D)
 - **Prisma + MySQL** (Banco de dados)
 - **Notion API** (Fonte do acervo e dos vídeos)
-- **sharp** (Conversão de imagens para WebP)
+- **sharp** e **heic-convert** (Conversão de imagens para WebP)
 - **Docker e Docker Compose** (Containerização)
 - **Caddy** (Proxy reverso em produção)
 - **Biome** (Lint e formatação)
 
-## Como funciona o conteúdo
+## Sumário
 
-```
-Notion (acervo e vídeos)
-        │   npm run sync-notion
-        ▼
-   MySQL (Prisma)  +  imagens e vídeos baixados em /app/uploads/notion
-        │
-        ▼
-   Site Next.js  ──  rota /media/* serve as imagens e vídeos baixados
+1. [Como funciona a integração com o Notion](#como-funciona-a-integração-com-o-notion)
+2. [Pré-requisitos](#pré-requisitos)
+3. [Como rodar o projeto com Docker (recomendado)](#como-rodar-o-projeto-com-docker-recomendado)
+4. [Configurando o Notion](#configurando-o-notion)
+5. [Rotina do dia a dia](#rotina-do-dia-a-dia)
+6. [Rodar o projeto sem Docker](#rodar-o-projeto-sem-docker)
+7. [Banco de dados: MySQL + Prisma](#banco-de-dados-mysql--prisma)
+8. [Produção](#produção)
+9. [Estrutura do projeto](#estrutura-do-projeto)
+10. [Diagrama do banco de dados](#diagrama-do-banco-de-dados)
+11. [Boas práticas](#boas-práticas)
+12. [Segurança](#segurança)
+13. [Futuras alterações](#futuras-alterações)
+
+---
+
+## Como funciona a integração com o Notion
+
+### Visão geral
+
+```mermaid
+flowchart LR
+    N[("Notion<br/>acervo e vídeos")] -->|"npm run sync-notion"| S["scripts/sync-notion.ts"]
+    S -->|"upsert por notionId"| DB[("MySQL (Prisma)")]
+    S -->|"fotos em WebP e vídeos"| V[("Volume uploads_data")]
+    V --> M["Rota /media/*"]
+    DB --> A["Site Next.js"]
+    M --> A
 ```
 
-O comando `sync-notion` lê os dois bancos do Notion, grava os dados no MySQL, baixa as fotos (convertidas para WebP) e os vídeos anexados. Peças e vídeos removidos do Notion ficam **inativos** no site (não são apagados do banco). Os arquivos baixados ficam no volume `uploads_data` do Docker e são servidos pela rota `/media/*`, então atualizar o conteúdo **não exige refazer o build**.
+O site **não consulta o Notion quando alguém o visita**. O script `sync-notion` faz essa ponte, de forma manual ou agendada:
+
+1. Lê os dois bancos do Notion (acervo e vídeos) usando uma conexão interna, com permissão só de leitura.
+2. Grava ou atualiza cada item no MySQL, usando o ID da página do Notion (`notionId`) como chave. Rodar o sync várias vezes não duplica registros.
+3. Baixa as fotos, converte para WebP e salva no volume `uploads_data`. Baixa também os vídeos anexados.
+4. O site lê os dados do MySQL e as mídias pela rota `/media/*`.
+
+Por isso o site continua no ar mesmo que o Notion fique indisponível ou o token seja revogado: o que para é apenas a atualização do conteúdo. Atualizar o conteúdo também não exige refazer o build do site.
+
+### O que cada coluna do Notion vira no banco
+
+**Acervo** (`Acervo` e `AcervoMidia`):
+
+| Coluna no Notion | Campo no banco |
+|---|---|
+| `Nome` | `titulo` e `nome` |
+| `Acervo` | `tags` |
+| `Add` (caixa de seleção) | `ativo` (peça visível ou não) |
+| `Arquivos e mídia` | `imagem`, `imagemCapa` (primeira foto) e uma linha em `AcervoMidia` por foto |
+| `Coleção` | `colecao` |
+| `Contexto Historico` | `contextoHistorico` |
+| `Data de Produção` | `dataProducao` |
+| `Dimensões` | `altura`, `largura` e `profundidade` (veja abaixo) |
+| `Doador` | `doador` |
+| `Estado de Conservação` | `estadoConservacao` |
+| `Local de Origem` | `cidadeOrigem`, `estadoOrigem` e `paisOrigem` (veja abaixo) |
+| `Material` | `material` |
+| `Nº de Inventário` | `numeroInventario` |
+| `Período/Época` | `periodo` |
+| `Técnica` | `tecnica` |
+
+Os campos `descricao`, `artista`, `localizacao` e `formaAquisicao` **não vêm do Notion**; o sync não os altera, então o que já existir neles é preservado.
+
+- **Dimensões:** se o texto tiver o formato `Altura: 30 cm, Largura: 20 cm, Profundidade: 10 cm`, cada medida vai para o seu campo. Caso contrário, o texto inteiro vai para `altura`.
+- **Local de Origem:** o formato esperado é `Cidade - UF - País`. Se houver só a cidade, o país assume "Brasil".
+- **Ordem:** as peças são numeradas pela ordem de criação no Notion.
+
+**Vídeos** (`VideoEspecial`):
+
+| Coluna no Notion | Campo no banco |
+|---|---|
+| `Nome` | `titulo` |
+| `Descrição` | `descricao` |
+| `Tipo` (opcional) | `tipo` (padrão: `especial`) |
+| `Arquivos e mídia` | `video` (arquivo baixado e servido em `/media/videos/...`). **É o preferido.** |
+| `URL` | `video`, usada só se não houver arquivo anexado (YouTube, Vimeo etc.) |
+| `Ordem` (opcional) | `ordem` (padrão: posição na lista) |
+| `Add` | `ativo` |
+
+As colunas `Créditos`, `Créditos adicionais`, `Duração` e `Produção` ainda não são salvas, pois o model `VideoEspecial` não tem campos para elas.
+
+### Regras de sincronização
+
+- **Peça nova no Notion:** é criada no banco.
+- **Peça editada no Notion:** é atualizada no banco. Editar os mesmos campos pelo painel admin não é recomendado, pois serão sobrescritos na próxima sincronização.
+- **Peça removida do Notion:** fica **inativa** no site (não é apagada do banco).
+- **Peça que falhou na sincronização:** continua como estava e não é desativada.
+- **Peças antigas (importadas do CSV):** se uma peça do Notion tiver o mesmo `Nº de Inventário` de uma antiga, o registro antigo é reaproveitado, mantendo o mesmo `id`. As antigas que não existem no Notion podem ser desativadas com `--clean-legacy`.
+- **Segurança contra lista vazia:** se o Notion devolver zero itens, o sync aborta em vez de desativar o acervo inteiro.
+
+### Como as mídias são tratadas
+
+- **Fotos:** são baixadas, giradas conforme a orientação original, convertidas para WebP e salvas com um nome gerado a partir do arquivo no Notion. Foto igual não é baixada de novo; foto trocada no Notion vira um arquivo novo.
+- **HEIC (iPhone):** é convertido automaticamente. Se um arquivo HEIC vier com outra extensão, o script tenta a conversão também.
+- **Vídeos:** são gravados primeiro em arquivo temporário, então um download interrompido não deixa vídeo pela metade. Prefira `.mp4` (H.264/AAC); `.mov` pode não tocar em todos os navegadores.
+- **Arquivos vazios:** contam como não baixados e são baixados de novo.
+- **Falhas de rede:** cada download tem timeout e até 3 tentativas. A causa real do erro aparece no terminal.
+- **Por que o Notion não serve as imagens direto:** os links de arquivos do Notion expiram em cerca de 1 hora. Baixar as mídias evita imagens quebradas.
+
+### Rota `/media/*`
+
+O Next.js em produção só serve arquivos que existiam em `public/` no momento do build, e as mídias do Notion chegam depois. A rota `src/app/media/[...path]/route.ts` lê os arquivos do volume `uploads_data` e os entrega ao navegador, com cache longo (o nome muda quando a foto muda), suporte a `Range` (necessário para vídeos no Safari e para avançar o vídeo) e proteção contra acesso a arquivos fora da pasta de mídia.
+
+### Dependência do Notion
+
+| Situação | O que acontece |
+|---|---|
+| Notion fora do ar ou token revogado | O site continua com os últimos dados sincronizados; só a atualização para |
+| Parar de usar o Notion | Basta parar de rodar o sync; os dados ficam no banco e podem ser editados direto nele |
+| Vídeo cadastrado só pela coluna `URL` | Depende do serviço do link (YouTube, Drive...) |
+| Rotas de API que consultam o Notion a cada acesso, se ainda existirem | Dependem do Notion em tempo real; se o site não as usa, podem ser removidas |
+
+Faça **backup** do volume do MySQL (`db_data`) e do `uploads_data`, pois o conteúdo sincronizado vive no servidor.
+
+---
 
 ## Pré-requisitos
 
@@ -422,7 +156,7 @@ sudo usermod -aG docker $USER
 
 Depois saia da sessão e entre de novo.
 
-## Como Rodar o Projeto com Docker (recomendado)
+## Como rodar o projeto com Docker (recomendado)
 
 ### 1. Clonar o repositório
 
@@ -431,13 +165,15 @@ git clone https://github.com/Projeto-Site-do-Museu/ifsc-museu-saojose.git
 cd ifsc-museu-saojose
 ```
 
+(Se estiver usando um fork, troque pelo endereço do seu fork.)
+
 ### 2. Criar o arquivo `.env`
 
 ```bash
 cp .env.example .env
 ```
 
-Preencha as variáveis:
+Preencha as variáveis, **sem aspas e sem espaços ao redor do `=`**:
 
 | Variável | Descrição |
 |---|---|
@@ -488,7 +224,7 @@ Cria o usuário `admin@acervo.local`, os artigos, o carrossel e as configuraçõ
 docker compose exec app npm run sync-notion
 ```
 
-Ao final, o terminal mostra um resumo com o número de peças e vídeos sincronizados e de erros. Recarregue o site em `http://localhost:3000`.
+Na primeira vez, o sync baixa e converte todas as fotos e pode levar vários minutos. O terminal mostra o progresso (`[12/216] Nome da peça`) e, ao final, um resumo com o número de peças e vídeos sincronizados e de erros. Depois recarregue o site em `http://localhost:3000`.
 
 ## Configurando o Notion
 
@@ -497,15 +233,7 @@ Ao final, o terminal mostra um resumo com o número de peças e vídeos sincroni
 3. Abra cada banco (acervo e vídeos) no Notion, clique em **⋯ → Conexões** e adicione a conexão criada. Sem isso, a API responde "não encontrado".
 4. O ID de cada banco é o trecho de 32 caracteres na URL da página do banco. Coloque-os em `NOTION_ACERVO_DATABASE_ID` e `NOTION_VIDEOS_DATABASE_ID`.
 
-### Colunas esperadas
-
-**Banco do acervo:** `Nome`, `Acervo`, `Add` (caixa de seleção: peça ativa), `Arquivos e mídia` (fotos), `Coleção`, `Contexto Historico`, `Data de Produção`, `Dimensões`, `Doador`, `Estado de Conservação`, `Local de Origem`, `Material`, `Nº de Inventário`, `Período/Época`, `Técnica`.
-
-**Banco de vídeos:** `Nome`, `Descrição`, `Arquivos e mídia` (arquivo `.mp4` anexado, preferido), `URL` (usada se não houver arquivo), `Add` (caixa de seleção) e, opcionalmente, `Tipo` e `Ordem`. As colunas `Créditos`, `Créditos adicionais`, `Duração` e `Produção` ainda não são salvas no banco.
-
-Os nomes das colunas estão no topo de `scripts/sync-notion.ts` (constantes `ACERVO` e `VIDEOS`) e podem ser ajustados.
-
-Formatos de imagem aceitos: JPG, PNG, WebP, GIF, AVIF, TIFF e HEIC (fotos de iPhone são convertidas automaticamente). Vídeos: prefira `.mp4` (H.264/AAC); arquivos `.mov` podem não tocar em todos os navegadores.
+Os nomes das colunas esperadas estão na tabela de mapeamento, acima, e no topo de `scripts/sync-notion.ts` (constantes `ACERVO` e `VIDEOS`), onde podem ser ajustados. Formatos de imagem aceitos: JPG, PNG, WebP, GIF, AVIF, TIFF e HEIC.
 
 ## Rotina do dia a dia
 
@@ -531,9 +259,9 @@ npm run sync-notion -- --clean-legacy  # desativa registros antigos que não exi
 
 > Evite `docker compose down -v`: o `-v` apaga o volume do banco de dados.
 
-## Rodar o Projeto sem Docker
+## Rodar o projeto sem Docker
 
-Requer um MySQL acessível (veja [Banco de Dados](#banco-de-dados-mysql--prisma)). No `.env.local`, use `localhost` no lugar de `mysql` na `DATABASE_URL`.
+Requer um MySQL acessível (veja [Banco de dados](#banco-de-dados-mysql--prisma)). No `.env.local`, use `localhost` no lugar de `mysql` na `DATABASE_URL`. O MySQL do `docker-compose.yml` não expõe a porta 3306 para fora do Docker; para usá-lo com o servidor de desenvolvimento local, adicione `ports: ["3306:3306"]` ao serviço `mysql`.
 
 ### Servidor de desenvolvimento
 
@@ -558,7 +286,7 @@ npm run start
 
 O `build` gera uma versão otimizada do site; qualquer erro no código pode impedi-lo e precisa ser corrigido antes.
 
-## Banco de Dados: MySQL + Prisma
+## Banco de dados: MySQL + Prisma
 
 ### Dependências
 
@@ -655,22 +383,25 @@ npx prisma studio                                        # via interface web
 - [Documentação Prisma](https://www.prisma.io/docs/)
 - [Documentação MySQL](https://dev.mysql.com/doc/)
 - [Prisma + Next.js](https://www.prisma.io/docs/guides/development-environment/nextjs)
+- [Notion API](https://developers.notion.com/)
 
 ## Produção
 
 O `Caddyfile` do repositório configura o proxy reverso do site. Em produção:
 
 1. Clone o repositório no servidor e crie o `.env` com valores próprios (senhas diferentes das de teste).
-2. Siga os passos da seção "Como Rodar o Projeto com Docker".
+2. Siga os passos da seção "Como rodar o projeto com Docker".
 3. Agende a sincronização com o Notion, por exemplo todos os dias às 3h, no `cron` do servidor:
 
    ```
    0 3 * * * cd /caminho/do/projeto && docker compose exec -T app npm run sync-notion >> /var/log/museu-sync.log 2>&1
    ```
 
-Se alguma página lê o Prisma durante o build, ela mostrará dados antigos até o próximo build; nesse caso, use `export const dynamic = 'force-dynamic'` ou `revalidate` na página.
+4. Para publicar uma versão nova do código, rode `docker compose up -d --build`.
 
-## Estrutura do Projeto
+Se alguma página lê o Prisma durante o build, ela mostrará dados antigos até o próximo build; nesse caso, use `export const dynamic = 'force-dynamic'` ou `revalidate` na página. O `mysql` deve ter `restart: unless-stopped` no `docker-compose.yml`, para voltar junto com o site depois de um reinício do servidor.
+
+## Estrutura do projeto
 
 ```
 /
@@ -688,7 +419,7 @@ Se alguma página lê o Prisma durante o build, ela mostrará dados antigos até
 │   │   ├── tour/        # Página do Tour 3D
 │   │   ├── media/       # Rota /media/* que serve as mídias baixadas do Notion
 │   │   └── ...          # Demais páginas e rotas de API
-│   ├── components/      # Componentes reutilizáveis (header, footer, tour3D...)
+│   ├── components/      # Componentes reutilizáveis (header, footer, tour 3D...)
 │   └── lib/             # Utilitários, incluindo a conexão com o Notion
 ├── Dockerfile           # Imagem de produção
 ├── docker-compose.yml   # Site (app) e MySQL
@@ -700,7 +431,7 @@ Se alguma página lê o Prisma durante o build, ela mostrará dados antigos até
 └── package.json         # Dependências e scripts
 ```
 
-## Diagrama do Banco de Dados
+## Diagrama do banco de dados
 
 Fonte: `prisma/schema.prisma` (confira lá em caso de divergência). Campos marcados como "opcional" aceitam `NULL`. Os campos `notionId` guardam o ID da página no Notion e são preenchidos pela sincronização.
 
@@ -811,7 +542,7 @@ erDiagram
 
 A exclusão de um `Acervo` remove suas `AcervoMidia` em cascata, conforme a relação definida no Prisma.
 
-## Boas Práticas
+## Boas práticas
 
 ### Mobile First com Tailwind CSS
 
@@ -834,37 +565,13 @@ As principais funcionalidades do site seguem as boas práticas das versões mais
 - **Code style:** o projeto usa **Biome**. Rode `npm run lint` para verificar e `npm run lint:fix` / `npm run format:fix` para corrigir.
 - **Performance:** imagens otimizadas (WebP) e uso de **lazy loading**.
 
-## Problemas comuns
-
-**`permission denied ... docker.sock`**: o usuário não está no grupo `docker`. Rode `sudo usermod -aG docker $USER` e saia e entre de novo na sessão.
-
-**`env file ... .env not found`**: crie o arquivo com `cp .env.example .env`.
-
-**Build falha em `next/font`** (`Cannot read properties of null (reading '1')`): o Google Fonts respondeu de forma inesperada durante o build. Tente novamente; se persistir, use a fonte localmente com `next/font/local`.
-
-**`value is too long for the column's type`**: a coluna do MySQL é pequena demais. Adicione `@db.Text` ao campo no `schema.prisma` e rode `npx prisma db push`.
-
-**`Nenhum usuário admin encontrado`**: rode `npm run setup-db` antes do `sync-notion`.
-
-**Fotos não aparecem (quadro preto com o título):** rode o sync de novo. Se persistir, veja os avisos `⚠️` que ele imprime, que indicam qual arquivo falhou.
-
-**O Notion retorna "object not found":** a conexão não foi adicionada ao banco (⋯ → Conexões) ou o ID do banco está errado.
-
-**`Port 3000 is in use, trying 3001`:** a porta está ocupada, em geral pelo container do Docker. Use `http://localhost:3000` (Docker) ou pare o container com `docker compose stop app` para usar o servidor de desenvolvimento.
-
 ## Segurança
 
 - Nunca versione o `.env`, tokens ou senhas.
 - Use uma conexão do Notion com permissão apenas de leitura.
 - Troque a senha padrão do administrador antes de colocar o site no ar.
 - Não escreva senhas reais na documentação ou nos scripts.
-
-## Contribuindo
-
-1. Faça um **fork** do repositório e clone o seu fork.
-2. Crie uma branch para a sua alteração: `git checkout -b minha-alteracao`.
-3. Faça os commits e envie: `git push -u origin minha-alteracao`.
-4. Abra um **Pull Request** para o repositório original.
+- Se algum token ou senha já esteve em um commit, considere-o comprometido e gere outro: o histórico do Git guarda tudo.
 
 ## Futuras alterações
 
@@ -872,6 +579,7 @@ As principais funcionalidades do site seguem as boas práticas das versões mais
 - Salvar no banco os campos `Créditos`, `Duração` e `Produção` dos vídeos.
 - Integrar os modelos 3D (`.glb`) do Notion ao tour virtual.
 - Novos jogos, usando os mesmos dados do acervo.
+- Remover as rotas de API antigas que consultam o Notion diretamente, se não forem mais usadas.
 
 ## Considerações finais
 
